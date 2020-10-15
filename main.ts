@@ -17,6 +17,7 @@ class MyStack extends TerraformStack {
     const account = new DataAwsCallerIdentity(this, 'account')
     const snsAction = [`arn:aws:sns:${provider.region}:${account.accountId}:monitor`]
 
+    // Remediation tips from https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#cis-3.1-remediation
     this.createMetricAndAlarm('CIS-3.1-UnauthorizedAPICalls', '{($.errorCode="*UnauthorizedOperation") || ($.errorCode="AccessDenied*")}', snsAction)
     this.createMetricAndAlarm('CIS-3.2-ConsoleSigninWithoutMFA', '{($.eventName="ConsoleLogin") && ($.additionalEventData.MFAUsed !="Yes")}', snsAction)
     this.createMetricAndAlarm('CIS-3.3-RootAccountUsageAlarm', '{$.userIdentity.type="Root" && $.userIdentity.invokedBy NOT EXISTS && $.eventType !="AwsServiceEvent"}', snsAction)
